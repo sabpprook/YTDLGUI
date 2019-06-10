@@ -210,8 +210,8 @@ namespace YTDLGUI
         private string GetDownloadParameter(int mode)
         {
             var sb = new StringBuilder();
-            sb.Append(" --encoding \"UTF-8\"");
-            sb.Append(checkPlaylist.Checked ? " --yes-playlist" : " --no-playlist");
+            sb.Append("--encoding \"UTF-8\"");
+            sb.Append(checkPlaylist.Checked ? " --ignore-errors --yes-playlist" : " --no-playlist");
             sb.Append($" -o \"{settings.DownloadFolder}\\%(title)s.%(ext)s\"");
             if (mode == 0)
             {
