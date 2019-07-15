@@ -4,7 +4,7 @@
 ![cover](https://i.imgur.com/kiIy7Ig.png)
 
 ## 主程式
-* [YTDLGUI.exe](https://github.com/sabpprook/YTDLGUI/releases/download/v1.0/YTDLGUI.exe)
+* [YTDLGUI.exe](https://github.com/sabpprook/YTDLGUI/releases/latest/download/YTDLGUI.exe)
 
     ```
     Size: 821248 bytes (802 KiB)
