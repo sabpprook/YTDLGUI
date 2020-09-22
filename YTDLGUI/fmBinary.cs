@@ -17,7 +17,7 @@ namespace YTDLGUI
     public partial class fmBinary : MaterialSkin.Controls.MaterialForm
     {
         private readonly string youtube_dl_url = "https://yt-dl.org/downloads/latest/youtube-dl.exe";
-        private readonly string ffmpeg_url = "https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-latest-win32-static.zip";
+        private readonly string ffmpeg_url = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-full.zip";
         private WebClient wc1 = new WebClient();
         private WebClient wc2 = new WebClient();
         private bool is_youtube_dl = false;
