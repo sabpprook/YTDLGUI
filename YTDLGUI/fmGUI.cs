@@ -33,7 +33,7 @@ namespace YTDLGUI
 
         private void fmGUI_Load(object sender, EventArgs e)
         {
-            bool isBinary = File.Exists("youtube-dl.exe") && File.Exists("ffmpeg.exe") && File.Exists("ffprobe.exe");
+            bool isBinary = File.Exists("yt-dlp.exe") && File.Exists("ffmpeg.exe") && File.Exists("ffprobe.exe");
             if (!isBinary)
             {
                 var fmBin = new fmBinary();
@@ -138,7 +138,7 @@ namespace YTDLGUI
 
         private void buttonUpdate_Click(object sender, EventArgs e)
         {
-            File.Delete("youtube-dl.exe");
+            File.Delete("yt-dlp.exe");
             File.Delete("ffmpeg.exe");
             File.Delete("ffprobe.exe");
             Process.Start(Process.GetCurrentProcess().MainModule.FileName);
@@ -152,7 +152,7 @@ namespace YTDLGUI
             foreach (var p in plist) p.Kill();
             plist = Process.GetProcessesByName("ffprobe");
             foreach (var p in plist) p.Kill();
-            plist = Process.GetProcessesByName("youtube-dl");
+            plist = Process.GetProcessesByName("yt-dlp");
             foreach (var p in plist) p.Kill();
         }
 
@@ -240,7 +240,7 @@ namespace YTDLGUI
         {
             using (Process p = new Process())
             {
-                p.StartInfo.FileName = "youtube-dl.exe";
+                p.StartInfo.FileName = "yt-dlp.exe";
                 p.StartInfo.Arguments = url + " --no-playlist --get-title --encoding \"UTF-8\"";
                 p.StartInfo.CreateNoWindow = true;
                 p.StartInfo.UseShellExecute = false;
@@ -256,7 +256,7 @@ namespace YTDLGUI
         {
             using (Process p = new Process())
             {
-                p.StartInfo.FileName = "youtube-dl.exe";
+                p.StartInfo.FileName = "yt-dlp.exe";
                 p.StartInfo.Arguments = parameter;
                 p.StartInfo.CreateNoWindow = true;
                 p.StartInfo.UseShellExecute = false;
