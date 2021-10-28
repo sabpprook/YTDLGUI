@@ -73,6 +73,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SplitDownload.cs" />
     <EmbeddedResource Include="fmBinary.resx">
       <DependentUpon>fmBinary.cs</DependentUpon>
     </EmbeddedResource>
@@ -99,7 +100,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Resources\update" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
