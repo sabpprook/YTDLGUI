@@ -33,35 +33,24 @@ namespace YTDLGUI
 
         private void fmGUI_Load(object sender, EventArgs e)
         {
-            bool isBinary = File.Exists("yt-dlp.exe") && File.Exists("ffmpeg.exe") && File.Exists("ffprobe.exe");
-            if (!isBinary)
+            if (!Utils.CheckBinary())
             {
-                var fmBin = new fmBinary();
-                var result = fmBin.ShowDialog();
+                var frm = new fmBinary();
+                var result = frm.ShowDialog();
                 if (result != DialogResult.OK)
-                {
                     Environment.Exit(0);
-                }
             }
+
             if (string.IsNullOrEmpty(settings.DownloadFolder))
-            {
                 settings.DownloadFolder = Environment.CurrentDirectory;
-            }
+
             textFolder.Text = settings.DownloadFolder;
-            switch (settings.VidoeFormat)
-            {
-                case 0:
-                    radioVDefault.Checked = true;
-                    break;
-                case 1:
-                    radioVMP4.Checked = true;
-                    break;
-                case 2:
-                    radioVWebm.Checked = true;
-                    break;
-                default:
-                    break;
-            }
+
+            var vformat = settings.VidoeFormat;
+            radioVDefault.Checked = vformat == (int)VideoFormat.Default;
+            radioVMP4.Checked = vformat == (int)VideoFormat.MP4;
+            radioVWebm.Checked = vformat == (int)VideoFormat.Webm;
+
             comboAFormat.SelectedIndex = settings.AudioFormat;
             comboAQuality.SelectedIndex = settings.AudioQuality;
             checkPlaylist.Checked = settings.IsPlaylist;
@@ -71,7 +60,7 @@ namespace YTDLGUI
 
         private void fmGUI_FormClosed(object sender, FormClosedEventArgs e)
         {
-            settings.Save();
+            Properties.Settings.Default.Save();
         }
 
         private void labelAuthor_Click(object sender, EventArgs e)
@@ -105,7 +94,7 @@ namespace YTDLGUI
         private void comboAFormat_SelectedIndexChanged(object sender, EventArgs e)
         {
             var idx = comboAFormat.SelectedIndex;
-            comboAQuality.Enabled = (idx != 0 && idx != 4 && idx != 5);
+            comboAQuality.Enabled = Utils.QualityAdjustable(idx);
             settings.AudioFormat = idx;
         }
 
@@ -220,14 +209,14 @@ namespace YTDLGUI
                 if (radioVDefault.Checked) sb.Append($"+bestaudio");
                 if (radioVMP4.Checked) sb.Append($"[ext=mp4]+bestaudio[ext=m4a]");
                 if (radioVWebm.Checked) sb.Append($"[ext=webm]+bestaudio[ext=webm]");
+                sb.Append("/best");
                 return sb.ToString();
             }
             else if (mode == 1)
             {
-                sb.Append(" --extract-audio");
+                sb.Append(" -f bestaudio/best --extract-audio");
                 sb.Append($" --audio-format {comboAFormat.Text}");
                 sb.Append($" --audio-quality {(comboAQuality.Enabled ? comboAQuality.Text : "0")}");
-                sb.Append(" -f bestaudio");
                 return sb.ToString();
             }
             else
