@@ -106,5 +106,17 @@ namespace YTDLGUI.Properties {
                 this["MaxResolution"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsLiveFromStart {
+            get {
+                return ((bool)(this["IsLiveFromStart"]));
+            }
+            set {
+                this["IsLiveFromStart"] = value;
+            }
+        }
     }
 }

@@ -56,11 +56,12 @@ namespace YTDLGUI
             checkPlaylist.Checked = settings.IsPlaylist;
             checkMaxRes.Checked = settings.IsMaxResolution;
             comboMaxRes.SelectedIndex = settings.MaxResolution;
+            checkLiveFromStart.Checked = settings.IsLiveFromStart;
         }
 
         private void fmGUI_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Properties.Settings.Default.Save();
+            settings.Save();
         }
 
         private void labelAuthor_Click(object sender, EventArgs e)
@@ -123,6 +124,12 @@ namespace YTDLGUI
         private void comboMaxRes_SelectedIndexChanged(object sender, EventArgs e)
         {
             settings.MaxResolution = comboMaxRes.SelectedIndex;
+        }
+
+        private void labelLiveFromStart_Click(object sender, EventArgs e)
+        {
+            checkLiveFromStart.Checked = !checkLiveFromStart.Checked;
+            settings.IsLiveFromStart = checkLiveFromStart.Checked;
         }
 
         private void buttonUpdate_Click(object sender, EventArgs e)
@@ -200,7 +207,9 @@ namespace YTDLGUI
         {
             var sb = new StringBuilder();
             sb.Append(" --encoding \"UTF-8\" --no-warnings --ignore-errors");
+            sb.Append($" -N {numUpDown_MT_fragment.Value} --write-subs --embed-subs --write-thumbnail --embed-thumbnail --embed-metadata --embed-chapters");
             sb.Append(checkPlaylist.Checked ? " --yes-playlist" : " --no-playlist");
+            sb.Append(checkLiveFromStart.Checked ? " --live-from-start" : " --no-live-from-start");
             sb.Append($" -o \"{settings.DownloadFolder}\\%(title)s.%(ext)s\"");
             if (mode == 0)
             {
