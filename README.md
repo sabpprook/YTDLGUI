@@ -6,13 +6,6 @@
 ## 主程式
 * [YTDLGUI.exe](https://github.com/sabpprook/YTDLGUI/releases/latest/download/YTDLGUI.exe)
 
-    ```
-    Size: 820736 bytes
-    CRC32: E3AD21A6
-    MD5: B5DCEBC563C6F2C0B46342F8F6C77FC4
-    SHA1: E9D9BE853801D37F3F87E477FD747839B78EF9D0
-    SHA256: AF95EB6D113343FC4D9653CE4680978613FC9128B5F21D7DF01E9BCB61801778
-    ```
 
 ## 影片下載
 * 下載模式
@@ -50,3 +43,9 @@
     * 1440P : 2160 x 1440
     * 2160P : 3840 x 2160
     * 4320P : 7680 x 4320
+
+* 多執行續分片下載 : 處理 m3u8/MPD 同時下載多少個分片
+
+* 下載完整直播 : 僅支援 YouTube
+
+* 使用 Aria2c 下載器 : 使用 Aria2c 作為外部下載器，某些時候能提供更快速度下載
