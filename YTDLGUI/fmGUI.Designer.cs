@@ -41,6 +41,10 @@
             this.labelAQuality = new System.Windows.Forms.Label();
             this.labelAFormat = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.labelLiveFromStart = new System.Windows.Forms.Label();
+            this.checkLiveFromStart = new MaterialSkin.Controls.MaterialCheckBox();
+            this.numUpDown_MT_fragment = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
             this.buttonUpdate = new MaterialSkin.Controls.MaterialFlatButton();
             this.comboMaxRes = new System.Windows.Forms.ComboBox();
             this.labelMaxRes = new System.Windows.Forms.Label();
@@ -61,10 +65,8 @@
             this.buttonAbort = new MaterialSkin.Controls.MaterialRaisedButton();
             this.buttonDownload = new MaterialSkin.Controls.MaterialRaisedButton();
             this.labelAuthor = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.numUpDown_MT_fragment = new System.Windows.Forms.NumericUpDown();
-            this.labelLiveFromStart = new System.Windows.Forms.Label();
-            this.checkLiveFromStart = new MaterialSkin.Controls.MaterialCheckBox();
+            this.labelUseAria2c = new System.Windows.Forms.Label();
+            this.checkUseAria2c = new MaterialSkin.Controls.MaterialCheckBox();
             this.tabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -107,8 +109,10 @@
             this.tabControl.Multiline = true;
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(305, 180);
+            this.tabControl.Size = new System.Drawing.Size(305, 229);
+            this.tabControl.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControl.TabIndex = 3;
+            this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
             // 
             // tabPage1
             // 
@@ -253,6 +257,8 @@
             // tabPage3
             // 
             this.tabPage3.BackColor = System.Drawing.Color.White;
+            this.tabPage3.Controls.Add(this.labelUseAria2c);
+            this.tabPage3.Controls.Add(this.checkUseAria2c);
             this.tabPage3.Controls.Add(this.labelLiveFromStart);
             this.tabPage3.Controls.Add(this.checkLiveFromStart);
             this.tabPage3.Controls.Add(this.numUpDown_MT_fragment);
@@ -266,9 +272,72 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 4);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(297, 154);
+            this.tabPage3.Size = new System.Drawing.Size(297, 203);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "OPTION";
+            // 
+            // labelLiveFromStart
+            // 
+            this.labelLiveFromStart.AutoSize = true;
+            this.labelLiveFromStart.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.labelLiveFromStart.Font = new System.Drawing.Font("Microsoft JhengHei UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.labelLiveFromStart.Location = new System.Drawing.Point(40, 106);
+            this.labelLiveFromStart.Name = "labelLiveFromStart";
+            this.labelLiveFromStart.Size = new System.Drawing.Size(215, 19);
+            this.labelLiveFromStart.TabIndex = 10;
+            this.labelLiveFromStart.Text = "下載完整直播 (YouTube Only)";
+            this.labelLiveFromStart.Click += new System.EventHandler(this.labelLiveFromStart_Click);
+            // 
+            // checkLiveFromStart
+            // 
+            this.checkLiveFromStart.AutoSize = true;
+            this.checkLiveFromStart.Depth = 0;
+            this.checkLiveFromStart.Font = new System.Drawing.Font("Roboto", 10F);
+            this.checkLiveFromStart.Location = new System.Drawing.Point(11, 100);
+            this.checkLiveFromStart.Margin = new System.Windows.Forms.Padding(0);
+            this.checkLiveFromStart.MouseLocation = new System.Drawing.Point(-1, -1);
+            this.checkLiveFromStart.MouseState = MaterialSkin.MouseState.HOVER;
+            this.checkLiveFromStart.Name = "checkLiveFromStart";
+            this.checkLiveFromStart.Ripple = true;
+            this.checkLiveFromStart.Size = new System.Drawing.Size(26, 30);
+            this.checkLiveFromStart.TabIndex = 9;
+            this.checkLiveFromStart.UseVisualStyleBackColor = true;
+            // 
+            // numUpDown_MT_fragment
+            // 
+            this.numUpDown_MT_fragment.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
+            this.numUpDown_MT_fragment.Location = new System.Drawing.Point(241, 73);
+            this.numUpDown_MT_fragment.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numUpDown_MT_fragment.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numUpDown_MT_fragment.Name = "numUpDown_MT_fragment";
+            this.numUpDown_MT_fragment.Size = new System.Drawing.Size(40, 24);
+            this.numUpDown_MT_fragment.TabIndex = 8;
+            this.numUpDown_MT_fragment.TabStop = false;
+            this.numUpDown_MT_fragment.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.numUpDown_MT_fragment.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.label1.Font = new System.Drawing.Font("Microsoft JhengHei UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label1.Location = new System.Drawing.Point(40, 75);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(129, 19);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "多執行續分片下載";
             // 
             // buttonUpdate
             // 
@@ -277,7 +346,7 @@
             this.buttonUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
             this.buttonUpdate.Depth = 0;
             this.buttonUpdate.Icon = null;
-            this.buttonUpdate.Location = new System.Drawing.Point(86, 132);
+            this.buttonUpdate.Location = new System.Drawing.Point(86, 167);
             this.buttonUpdate.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.buttonUpdate.MouseState = MaterialSkin.MouseState.HOVER;
             this.buttonUpdate.Name = "buttonUpdate";
@@ -517,68 +586,33 @@
             this.labelAuthor.Text = "程式作者";
             this.labelAuthor.Click += new System.EventHandler(this.labelAuthor_Click);
             // 
-            // label1
+            // labelUseAria2c
             // 
-            this.label1.AutoSize = true;
-            this.label1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.label1.Font = new System.Drawing.Font("Microsoft JhengHei UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label1.Location = new System.Drawing.Point(40, 75);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(129, 19);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "多執行續分片下載";
+            this.labelUseAria2c.AutoSize = true;
+            this.labelUseAria2c.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.labelUseAria2c.Font = new System.Drawing.Font("Microsoft JhengHei UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.labelUseAria2c.Location = new System.Drawing.Point(40, 137);
+            this.labelUseAria2c.Name = "labelUseAria2c";
+            this.labelUseAria2c.Size = new System.Drawing.Size(215, 19);
+            this.labelUseAria2c.TabIndex = 12;
+            this.labelUseAria2c.Text = "使用 Aria2c 下載器 (Optional)";
+            this.labelUseAria2c.Click += new System.EventHandler(this.labelUseAria2c_Click);
             // 
-            // numUpDown_MT_fragment
+            // checkUseAria2c
             // 
-            this.numUpDown_MT_fragment.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.numUpDown_MT_fragment.Location = new System.Drawing.Point(241, 73);
-            this.numUpDown_MT_fragment.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numUpDown_MT_fragment.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numUpDown_MT_fragment.Name = "numUpDown_MT_fragment";
-            this.numUpDown_MT_fragment.Size = new System.Drawing.Size(40, 24);
-            this.numUpDown_MT_fragment.TabIndex = 8;
-            this.numUpDown_MT_fragment.TabStop = false;
-            this.numUpDown_MT_fragment.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.numUpDown_MT_fragment.Value = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-            // 
-            // labelLiveFromStart
-            // 
-            this.labelLiveFromStart.AutoSize = true;
-            this.labelLiveFromStart.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.labelLiveFromStart.Font = new System.Drawing.Font("Microsoft JhengHei UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.labelLiveFromStart.Location = new System.Drawing.Point(40, 106);
-            this.labelLiveFromStart.Name = "labelLiveFromStart";
-            this.labelLiveFromStart.Size = new System.Drawing.Size(215, 19);
-            this.labelLiveFromStart.TabIndex = 10;
-            this.labelLiveFromStart.Text = "下載完整直播 (YouTube Only)";
-            this.labelLiveFromStart.Click += new System.EventHandler(this.labelLiveFromStart_Click);
-            // 
-            // checkLiveFromStart
-            // 
-            this.checkLiveFromStart.AutoSize = true;
-            this.checkLiveFromStart.Depth = 0;
-            this.checkLiveFromStart.Font = new System.Drawing.Font("Roboto", 10F);
-            this.checkLiveFromStart.Location = new System.Drawing.Point(11, 100);
-            this.checkLiveFromStart.Margin = new System.Windows.Forms.Padding(0);
-            this.checkLiveFromStart.MouseLocation = new System.Drawing.Point(-1, -1);
-            this.checkLiveFromStart.MouseState = MaterialSkin.MouseState.HOVER;
-            this.checkLiveFromStart.Name = "checkLiveFromStart";
-            this.checkLiveFromStart.Ripple = true;
-            this.checkLiveFromStart.Size = new System.Drawing.Size(26, 30);
-            this.checkLiveFromStart.TabIndex = 9;
-            this.checkLiveFromStart.UseVisualStyleBackColor = true;
+            this.checkUseAria2c.AutoSize = true;
+            this.checkUseAria2c.Depth = 0;
+            this.checkUseAria2c.Font = new System.Drawing.Font("Roboto", 10F);
+            this.checkUseAria2c.Location = new System.Drawing.Point(11, 131);
+            this.checkUseAria2c.Margin = new System.Windows.Forms.Padding(0);
+            this.checkUseAria2c.MouseLocation = new System.Drawing.Point(-1, -1);
+            this.checkUseAria2c.MouseState = MaterialSkin.MouseState.HOVER;
+            this.checkUseAria2c.Name = "checkUseAria2c";
+            this.checkUseAria2c.Ripple = true;
+            this.checkUseAria2c.Size = new System.Drawing.Size(26, 30);
+            this.checkUseAria2c.TabIndex = 11;
+            this.checkUseAria2c.UseVisualStyleBackColor = true;
+            this.checkUseAria2c.CheckedChanged += new System.EventHandler(this.checkUseAria2c_CheckedChanged);
             // 
             // fmGUI
             // 
@@ -657,6 +691,8 @@
         private System.Windows.Forms.NumericUpDown numUpDown_MT_fragment;
         private System.Windows.Forms.Label labelLiveFromStart;
         private MaterialSkin.Controls.MaterialCheckBox checkLiveFromStart;
+        private System.Windows.Forms.Label labelUseAria2c;
+        private MaterialSkin.Controls.MaterialCheckBox checkUseAria2c;
     }
 }
 

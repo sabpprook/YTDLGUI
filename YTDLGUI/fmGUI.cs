@@ -86,6 +86,22 @@ namespace YTDLGUI
             }
         }
 
+        private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabControl.SelectedIndex == 2)
+            {
+                buttonDownload.Visible = false;
+                buttonAbort.Visible = false;
+                buttonClear.Visible = false;
+            }
+            else
+            {
+                buttonDownload.Visible = true;
+                buttonAbort.Visible = true;
+                buttonClear.Visible = true;
+            }
+        }
+
         private void radioVideoFormat_CheckedChanged(object sender, EventArgs e)
         {
             var obj = (MaterialRadioButton)sender;
@@ -132,6 +148,20 @@ namespace YTDLGUI
             settings.IsLiveFromStart = checkLiveFromStart.Checked;
         }
 
+        private void labelUseAria2c_Click(object sender, EventArgs e)
+        {
+            checkUseAria2c.Checked = !checkUseAria2c.Checked;
+        }
+
+        private void checkUseAria2c_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!File.Exists("aria2c.exe"))
+            {
+                if (!checkUseAria2c.Checked) Process.Start("https://github.com/aria2/aria2/releases/latest");
+                checkUseAria2c.Checked = false;
+            }
+        }
+
         private void buttonUpdate_Click(object sender, EventArgs e)
         {
             File.Delete("yt-dlp.exe");
@@ -145,11 +175,13 @@ namespace YTDLGUI
         {
             IsAbort = true;
             var plist = Process.GetProcessesByName("ffmpeg");
-            foreach (var p in plist) p.Kill();
+            foreach (var p in plist) if (p.MainModule.FileName.Contains(Environment.CurrentDirectory)) p.Kill();
             plist = Process.GetProcessesByName("ffprobe");
-            foreach (var p in plist) p.Kill();
+            foreach (var p in plist) if (p.MainModule.FileName.Contains(Environment.CurrentDirectory)) p.Kill();
             plist = Process.GetProcessesByName("yt-dlp");
-            foreach (var p in plist) p.Kill();
+            foreach (var p in plist) if (p.MainModule.FileName.Contains(Environment.CurrentDirectory)) p.Kill();
+            plist = Process.GetProcessesByName("aria2c");
+            foreach (var p in plist) if (p.MainModule.FileName.Contains(Environment.CurrentDirectory)) p.Kill();
         }
 
         private void buttonClear_Click(object sender, EventArgs e)
@@ -207,9 +239,10 @@ namespace YTDLGUI
         {
             var sb = new StringBuilder();
             sb.Append(" --encoding \"UTF-8\" --no-warnings --ignore-errors");
-            sb.Append($" -N {numUpDown_MT_fragment.Value} --write-subs --embed-subs --write-thumbnail --embed-thumbnail --embed-metadata --embed-chapters");
+            sb.Append($" -N {numUpDown_MT_fragment.Value} --embed-subs --embed-thumbnail --embed-metadata --embed-chapters");
             sb.Append(checkPlaylist.Checked ? " --yes-playlist" : " --no-playlist");
-            sb.Append(checkLiveFromStart.Checked ? " --live-from-start" : " --no-live-from-start");
+            sb.Append(checkLiveFromStart.Checked ? " --live-from-start" : string.Empty);
+            sb.Append(checkUseAria2c.Checked ? " --downloader aria2c" : string.Empty);
             sb.Append($" -o \"{settings.DownloadFolder}\\%(title)s.%(ext)s\"");
             if (mode == 0)
             {
@@ -302,6 +335,18 @@ namespace YTDLGUI
                         status.Text = "下載中...";
                         progress.Text = match.Groups[1].Value.Replace(" ", "");
                         size.Text = match.Groups[2].Value.Replace(" ", "").Replace("iB", "B");
+                        speed.Text = match.Groups[3].Value.Replace(" ", "").Replace("iB", "B");
+                        ETA.Text = match.Groups[4].Value.Replace(" ", "");
+                    }));
+                }
+                match = Regex.Match(text, "\\[.+ (\\w+)\\/.+\\((.+)\\).+DL:(.+).+ETA:(.+)\\]");
+                if (match.Success)
+                {
+                    Invoke(new Action(() =>
+                    {
+                        status.Text = "下載中...";
+                        progress.Text = match.Groups[2].Value.Replace(" ", "");
+                        size.Text = match.Groups[1].Value.Replace(" ", "").Replace("iB", "B");
                         speed.Text = match.Groups[3].Value.Replace(" ", "").Replace("iB", "B");
                         ETA.Text = match.Groups[4].Value.Replace(" ", "");
                     }));
