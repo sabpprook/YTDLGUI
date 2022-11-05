@@ -22,6 +22,7 @@ namespace YTDLGUI
         ListViewItem currentItem { get; set; }
         bool IsAbort { get; set; }
         string PlayListCount { get; set; }
+        DateTimeOffset updateTime { get; set; }
 
         public fmGUI()
         {
@@ -202,7 +203,7 @@ namespace YTDLGUI
                 if (!string.IsNullOrEmpty(url))
                 {
                     var parameter = GetDownloadParameter(mode);
-                    var item = new ListViewItem(new string[] { url , "--", "--", "--", "--", "準備中", url + parameter });
+                    var item = new ListViewItem(new string[] { url, "--", "--", "--", "--", "準備中", url + parameter });
                     listView.Items.Add(item);
                 }
             }
@@ -218,6 +219,7 @@ namespace YTDLGUI
                     buttonAbort.Enabled = true;
                     title.Text = await Task.Run(() => GetTitle(title.Text));
                     PlayListCount = "";
+                    updateTime = DateTimeOffset.Now;
                     await Task.Run(() => Download(parameter.Text));
                     status.Text = "下載完成";
                     parameter.Text = null;
@@ -239,7 +241,7 @@ namespace YTDLGUI
         {
             var sb = new StringBuilder();
             sb.Append(" --encoding \"UTF-8\" --no-warnings --ignore-errors");
-            sb.Append($" -N {numUpDown_MT_fragment.Value} --embed-subs --embed-thumbnail --embed-metadata --embed-chapters");
+            sb.Append($" -N {numUpDown_MT_fragment.Value} --embed-subs --compat-options no-live-chat --embed-thumbnail --embed-metadata --embed-chapters");
             sb.Append(checkPlaylist.Checked ? " --yes-playlist" : " --no-playlist");
             sb.Append(checkLiveFromStart.Checked ? " --live-from-start" : string.Empty);
             sb.Append(checkUseAria2c.Checked ? " --downloader aria2c" : string.Empty);
@@ -327,29 +329,21 @@ namespace YTDLGUI
                         }));
                     }
                 }
-                match = Regex.Match(text, "\\[download\\](.+)of(.+)at(.+)ETA(.+)");
-                if (match.Success)
+                if (DateTimeOffset.Now.Subtract(updateTime).Milliseconds > 200)
                 {
-                    Invoke(new Action(() =>
+                    var result = GetProgress(text);
+                    if (!string.IsNullOrEmpty(result.progress))
                     {
-                        status.Text = "下載中...";
-                        progress.Text = match.Groups[1].Value.Replace(" ", "");
-                        size.Text = match.Groups[2].Value.Replace(" ", "").Replace("iB", "B");
-                        speed.Text = match.Groups[3].Value.Replace(" ", "").Replace("iB", "B");
-                        ETA.Text = match.Groups[4].Value.Replace(" ", "");
-                    }));
-                }
-                match = Regex.Match(text, "\\[.+ (\\w+)\\/.+\\((.+)\\).+DL:(.+).+ETA:(.+)\\]");
-                if (match.Success)
-                {
-                    Invoke(new Action(() =>
-                    {
-                        status.Text = "下載中...";
-                        progress.Text = match.Groups[2].Value.Replace(" ", "");
-                        size.Text = match.Groups[1].Value.Replace(" ", "").Replace("iB", "B");
-                        speed.Text = match.Groups[3].Value.Replace(" ", "").Replace("iB", "B");
-                        ETA.Text = match.Groups[4].Value.Replace(" ", "");
-                    }));
+                        Invoke(new Action(() =>
+                        {
+                            progress.Text = result.progress;
+                            size.Text = result.size;
+                            speed.Text = result.speed;
+                            ETA.Text = result.ETA;
+                            status.Text = "下載中...";
+                        }));
+                    }
+                    updateTime = DateTimeOffset.Now;
                 }
                 if (text.ToLower().Contains("ffmpeg"))
                 {
@@ -359,6 +353,38 @@ namespace YTDLGUI
                     }));
                 }
             }
+        }
+
+        private (string progress, string size, string speed, string ETA) GetProgress(string text)
+        {
+            string progress = string.Empty, size = string.Empty, speed = string.Empty, ETA = string.Empty;
+            // normal output
+            var match = Regex.Match(text, "\\[download\\](.+)of(.+)at(.+)ETA(.+)");
+            if (match.Success)
+            {
+                progress = match.Groups[1].Value.Replace(" ", "");
+                size = match.Groups[2].Value.Replace(" ", "").Replace("iB", "B");
+                speed = match.Groups[3].Value.Replace(" ", "").Replace("iB", "B");
+                ETA = match.Groups[4].Value.Replace(" ", "");
+            }
+            // fragment output
+            match = Regex.Match(text, "\\[download\\](.+)at(.+)\\((.+)\\) \\((.+)\\)");
+            if (match.Success)
+            {
+                progress = match.Groups[4].Value;
+                size = match.Groups[1].Value.Replace(" ", "").Replace("iB", "B");
+                speed = match.Groups[2].Value.Replace(" ", "").Replace("iB", "B");
+            }
+            // aria2c output
+            match = Regex.Match(text, "\\[.+ (\\w+)\\/.+\\((.+)\\).+DL:(.+).+ETA:(.+)\\]");
+            if (match.Success)
+            {
+                progress = match.Groups[2].Value.Replace(" ", "");
+                size = match.Groups[1].Value.Replace(" ", "").Replace("iB", "B");
+                speed = match.Groups[3].Value.Replace(" ", "").Replace("iB", "B");
+                ETA = match.Groups[4].Value.Replace(" ", "");
+            }
+            return (progress, size, speed, ETA);
         }
     }
 }
