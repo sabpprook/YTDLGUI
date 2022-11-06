@@ -220,7 +220,7 @@ namespace YTDLGUI
                 if (!string.IsNullOrEmpty(url))
                 {
                     var parameter = GetDownloadParameter(mode);
-                    var item = new ListViewItem(new string[] { url, "--", "--", "--", "--", "準備中", url + parameter });
+                    var item = new ListViewItem(new string[] { url, "--", "--", "--", "--", "準備中", $"{parameter} \"{url}\"" });
                     listView.Items.Add(item);
                 }
             }
@@ -257,7 +257,7 @@ namespace YTDLGUI
         private string GetDownloadParameter(int mode)
         {
             var sb = new StringBuilder();
-            sb.Append(" --encoding \"UTF-8\" --no-warnings --ignore-errors");
+            sb.Append("--encoding \"UTF-8\" --no-warnings --ignore-errors");
             sb.Append($" -N {numUpDown_MT_fragment.Value} --embed-subs --compat-options no-live-chat --embed-thumbnail --embed-metadata --embed-chapters");
             sb.Append(checkPlaylist.Checked ? " --yes-playlist" : " --no-playlist");
             sb.Append(checkLiveFromStart.Checked ? " --live-from-start" : string.Empty);
@@ -265,17 +265,17 @@ namespace YTDLGUI
             sb.Append($" -o \"{settings.DownloadFolder}\\%(title)s.%(ext)s\"");
             if (mode == 0)
             {
-                sb.Append(" -f bestvideo");
+                sb.Append(" -f \"bestvideo");
                 if (checkMaxRes.Checked) sb.Append($"[height<={comboMaxRes.Text.Replace("p", "")}]");
                 if (radioVDefault.Checked) sb.Append($"+bestaudio");
                 if (radioVMP4.Checked) sb.Append($"[ext=mp4]+bestaudio[ext=m4a]");
                 if (radioVWebm.Checked) sb.Append($"[ext=webm]+bestaudio[ext=webm]");
-                sb.Append("/best");
+                sb.Append("/best\"");
                 return sb.ToString();
             }
             else if (mode == 1)
             {
-                sb.Append(" -f bestaudio/best --extract-audio");
+                sb.Append(" -f \"bestaudio/best\" --extract-audio");
                 sb.Append($" --audio-format {comboAFormat.Text}");
                 sb.Append($" --audio-quality {(comboAQuality.Enabled ? comboAQuality.Text : "0")}");
                 return sb.ToString();
@@ -291,7 +291,7 @@ namespace YTDLGUI
             using (Process p = new Process())
             {
                 p.StartInfo.FileName = "yt-dlp.exe";
-                p.StartInfo.Arguments = url + " --no-playlist --get-title --encoding \"UTF-8\"";
+                p.StartInfo.Arguments = $"--no-playlist --get-title --encoding \"UTF-8\" \"{url}\"";
                 p.StartInfo.CreateNoWindow = true;
                 p.StartInfo.UseShellExecute = false;
                 p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
