@@ -18,9 +18,6 @@ namespace YTDLGUI
 {
     public partial class fmBinary : MaterialSkin.Controls.MaterialForm
     {
-        private readonly string ytdlp_url = "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe";
-        private readonly string ffmpeg_url = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip";
-        
         private bool is_ytdlp = false;
         private bool is_ffmpeg = false;
 
@@ -39,8 +36,8 @@ namespace YTDLGUI
 
             var sd1 = new SplitDownload();
             var sd2 = new SplitDownload();
-            sd1.DownloadFileAsync(ytdlp_url, "tmp_1");
-            sd2.DownloadFileAsync(ffmpeg_url, "tmp_2", 16);
+            sd1.DownloadFileAsync(Utils.ytdlp, "tmp_1");
+            sd2.DownloadFileAsync(Utils.ffmpeg, "tmp_2", 16);
 
             await Task.Run(() =>
             {

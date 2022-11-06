@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -158,36 +159,52 @@ namespace YTDLGUI
         {
             if (!File.Exists("aria2c.exe"))
             {
-                if (!checkUseAria2c.Checked) Process.Start("https://github.com/aria2/aria2/releases/latest");
+                if (!checkUseAria2c.Checked) Process.Start(Utils.aria2);
                 checkUseAria2c.Checked = false;
             }
         }
 
-        private void buttonUpdate_Click(object sender, EventArgs e)
+        private async void buttonUpdate_Click(object sender, EventArgs e)
         {
             File.Delete("yt-dlp.exe");
             File.Delete("ffmpeg.exe");
             File.Delete("ffprobe.exe");
-            Process.Start(Process.GetCurrentProcess().MainModule.FileName);
+            var GUIFile = Process.GetCurrentProcess().MainModule.FileName;
+            try
+            {
+                var http = new HttpClient();
+                var bytes = await http.GetByteArrayAsync(Utils.gui);
+                File.Move(GUIFile, GUIFile + ".old");
+                File.WriteAllBytes(GUIFile, bytes);
+            }
+            catch { }
+            Process.Start(GUIFile);
             Environment.Exit(0);
         }
 
         private void buttonAbort_Click(object sender, EventArgs e)
         {
             IsAbort = true;
-            var plist = Process.GetProcessesByName("ffmpeg");
-            foreach (var p in plist) if (p.MainModule.FileName.Contains(Environment.CurrentDirectory)) p.Kill();
-            plist = Process.GetProcessesByName("ffprobe");
-            foreach (var p in plist) if (p.MainModule.FileName.Contains(Environment.CurrentDirectory)) p.Kill();
-            plist = Process.GetProcessesByName("yt-dlp");
-            foreach (var p in plist) if (p.MainModule.FileName.Contains(Environment.CurrentDirectory)) p.Kill();
-            plist = Process.GetProcessesByName("aria2c");
-            foreach (var p in plist) if (p.MainModule.FileName.Contains(Environment.CurrentDirectory)) p.Kill();
+            var target = new string[] { "ffmpeg.exe", "ffprobe.exe", "yt-dlp.exe", "aria2c.exe" };
+            var plist = Process.GetProcesses().Where(p =>
+            {
+                try
+                {
+                    return p.MainModule.FileName.Contains(Environment.CurrentDirectory) &&
+                    target.Contains(p.MainModule.ModuleName);
+                }
+                catch { return false; }
+            }).ToArray();
+            foreach (var p in plist) p.Kill();
         }
 
         private void buttonClear_Click(object sender, EventArgs e)
         {
-            listView.Items.Clear();
+            var list = listView.Items.Cast<ListViewItem>().Where(x => string.IsNullOrEmpty(x.SubItems[6].Text)).ToList();
+            foreach (var item in list)
+            {
+                listView.Items.Remove(item);
+            }
         }
 
         private async void buttonDownload_Click(object sender, EventArgs e)

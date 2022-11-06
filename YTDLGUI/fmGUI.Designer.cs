@@ -41,6 +41,8 @@
             this.labelAQuality = new System.Windows.Forms.Label();
             this.labelAFormat = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.labelUseAria2c = new System.Windows.Forms.Label();
+            this.checkUseAria2c = new MaterialSkin.Controls.MaterialCheckBox();
             this.labelLiveFromStart = new System.Windows.Forms.Label();
             this.checkLiveFromStart = new MaterialSkin.Controls.MaterialCheckBox();
             this.numUpDown_MT_fragment = new System.Windows.Forms.NumericUpDown();
@@ -65,8 +67,6 @@
             this.buttonAbort = new MaterialSkin.Controls.MaterialRaisedButton();
             this.buttonDownload = new MaterialSkin.Controls.MaterialRaisedButton();
             this.labelAuthor = new System.Windows.Forms.Label();
-            this.labelUseAria2c = new System.Windows.Forms.Label();
-            this.checkUseAria2c = new MaterialSkin.Controls.MaterialCheckBox();
             this.tabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -99,7 +99,6 @@
             // 
             // tabControl
             // 
-            this.tabControl.Alignment = System.Windows.Forms.TabAlignment.Bottom;
             this.tabControl.Controls.Add(this.tabPage1);
             this.tabControl.Controls.Add(this.tabPage2);
             this.tabControl.Controls.Add(this.tabPage3);
@@ -120,10 +119,10 @@
             this.tabPage1.Controls.Add(this.radioVWebm);
             this.tabPage1.Controls.Add(this.radioVMP4);
             this.tabPage1.Controls.Add(this.radioVDefault);
-            this.tabPage1.Location = new System.Drawing.Point(4, 4);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(297, 154);
+            this.tabPage1.Size = new System.Drawing.Size(297, 203);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "VIDEO";
             // 
@@ -192,10 +191,10 @@
             this.tabPage2.Controls.Add(this.comboAFormat);
             this.tabPage2.Controls.Add(this.labelAQuality);
             this.tabPage2.Controls.Add(this.labelAFormat);
-            this.tabPage2.Location = new System.Drawing.Point(4, 4);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(297, 154);
+            this.tabPage2.Size = new System.Drawing.Size(297, 203);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "AUDIO";
             // 
@@ -269,12 +268,40 @@
             this.tabPage3.Controls.Add(this.labelPlaylist);
             this.tabPage3.Controls.Add(this.checkMaxRes);
             this.tabPage3.Controls.Add(this.checkPlaylist);
-            this.tabPage3.Location = new System.Drawing.Point(4, 4);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage3.Size = new System.Drawing.Size(297, 203);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "OPTION";
+            // 
+            // labelUseAria2c
+            // 
+            this.labelUseAria2c.AutoSize = true;
+            this.labelUseAria2c.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.labelUseAria2c.Font = new System.Drawing.Font("Microsoft JhengHei UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.labelUseAria2c.Location = new System.Drawing.Point(40, 137);
+            this.labelUseAria2c.Name = "labelUseAria2c";
+            this.labelUseAria2c.Size = new System.Drawing.Size(215, 19);
+            this.labelUseAria2c.TabIndex = 12;
+            this.labelUseAria2c.Text = "使用 Aria2c 下載器 (Optional)";
+            this.labelUseAria2c.Click += new System.EventHandler(this.labelUseAria2c_Click);
+            // 
+            // checkUseAria2c
+            // 
+            this.checkUseAria2c.AutoSize = true;
+            this.checkUseAria2c.Depth = 0;
+            this.checkUseAria2c.Font = new System.Drawing.Font("Roboto", 10F);
+            this.checkUseAria2c.Location = new System.Drawing.Point(11, 131);
+            this.checkUseAria2c.Margin = new System.Windows.Forms.Padding(0);
+            this.checkUseAria2c.MouseLocation = new System.Drawing.Point(-1, -1);
+            this.checkUseAria2c.MouseState = MaterialSkin.MouseState.HOVER;
+            this.checkUseAria2c.Name = "checkUseAria2c";
+            this.checkUseAria2c.Ripple = true;
+            this.checkUseAria2c.Size = new System.Drawing.Size(26, 30);
+            this.checkUseAria2c.TabIndex = 11;
+            this.checkUseAria2c.UseVisualStyleBackColor = true;
+            this.checkUseAria2c.CheckedChanged += new System.EventHandler(this.checkUseAria2c_CheckedChanged);
             // 
             // labelLiveFromStart
             // 
@@ -585,34 +612,6 @@
             this.labelAuthor.TabIndex = 11;
             this.labelAuthor.Text = "程式作者";
             this.labelAuthor.Click += new System.EventHandler(this.labelAuthor_Click);
-            // 
-            // labelUseAria2c
-            // 
-            this.labelUseAria2c.AutoSize = true;
-            this.labelUseAria2c.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.labelUseAria2c.Font = new System.Drawing.Font("Microsoft JhengHei UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.labelUseAria2c.Location = new System.Drawing.Point(40, 137);
-            this.labelUseAria2c.Name = "labelUseAria2c";
-            this.labelUseAria2c.Size = new System.Drawing.Size(215, 19);
-            this.labelUseAria2c.TabIndex = 12;
-            this.labelUseAria2c.Text = "使用 Aria2c 下載器 (Optional)";
-            this.labelUseAria2c.Click += new System.EventHandler(this.labelUseAria2c_Click);
-            // 
-            // checkUseAria2c
-            // 
-            this.checkUseAria2c.AutoSize = true;
-            this.checkUseAria2c.Depth = 0;
-            this.checkUseAria2c.Font = new System.Drawing.Font("Roboto", 10F);
-            this.checkUseAria2c.Location = new System.Drawing.Point(11, 131);
-            this.checkUseAria2c.Margin = new System.Windows.Forms.Padding(0);
-            this.checkUseAria2c.MouseLocation = new System.Drawing.Point(-1, -1);
-            this.checkUseAria2c.MouseState = MaterialSkin.MouseState.HOVER;
-            this.checkUseAria2c.Name = "checkUseAria2c";
-            this.checkUseAria2c.Ripple = true;
-            this.checkUseAria2c.Size = new System.Drawing.Size(26, 30);
-            this.checkUseAria2c.TabIndex = 11;
-            this.checkUseAria2c.UseVisualStyleBackColor = true;
-            this.checkUseAria2c.CheckedChanged += new System.EventHandler(this.checkUseAria2c_CheckedChanged);
             // 
             // fmGUI
             // 
