@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -19,11 +18,11 @@ namespace YTDLGUI
 {
     public partial class fmGUI : MaterialForm
     {
-        Properties.Settings settings = Properties.Settings.Default;
+        Properties.Settings settings { get; } = Properties.Settings.Default;
         ListViewItem currentItem { get; set; }
+        string listCounter { get; set; }
+        DateTimeOffset updateTime { get; set; } = DateTimeOffset.Now;
         bool IsAbort { get; set; }
-        string PlayListCount { get; set; }
-        DateTimeOffset updateTime { get; set; }
 
         public fmGUI()
         {
@@ -214,6 +213,7 @@ namespace YTDLGUI
             {
                 if (!string.IsNullOrEmpty(url))
                 {
+                    if (listView.Items.Cast<ListViewItem>().Where(x => x.SubItems[6].Text.Contains(url)).Count() > 0) continue;
                     var parameter = GetDownloadParameter(mode);
                     var item = new ListViewItem(new string[] { url, "--", "--", "--", "--", "準備中", $"{parameter} \"{url}\"" });
                     listView.Items.Add(item);
@@ -229,9 +229,8 @@ namespace YTDLGUI
                 if (!string.IsNullOrEmpty(parameter.Text))
                 {
                     buttonAbort.Enabled = true;
+                    listCounter = string.Empty;
                     title.Text = await Task.Run(() => GetTitle(title.Text));
-                    PlayListCount = "";
-                    updateTime = DateTimeOffset.Now;
                     await Task.Run(() => Download(parameter.Text));
                     status.Text = "下載完成";
                     parameter.Text = null;
@@ -268,17 +267,14 @@ namespace YTDLGUI
                 sb.Append("/best\"");
                 return sb.ToString();
             }
-            else if (mode == 1)
+            if (mode == 1)
             {
                 sb.Append(" -f \"bestaudio/best\" --extract-audio");
                 sb.Append($" --audio-format {comboAFormat.Text}");
                 sb.Append($" --audio-quality {(comboAQuality.Enabled ? comboAQuality.Text : "0")}");
                 return sb.ToString();
             }
-            else
-            {
-                return null;
-            }
+            return string.Empty;
         }
 
         private string GetTitle(string url)
@@ -286,7 +282,7 @@ namespace YTDLGUI
             using (Process p = new Process())
             {
                 p.StartInfo.FileName = "yt-dlp.exe";
-                p.StartInfo.Arguments = $"--encoding \"UTF-8\" --print filename -o \"%(title)s\" \"{url}\"";
+                p.StartInfo.Arguments = $"--encoding \"UTF-8\" --print title \"{url}\"";
                 p.StartInfo.CreateNoWindow = true;
                 p.StartInfo.UseShellExecute = false;
                 p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
@@ -299,6 +295,7 @@ namespace YTDLGUI
 
         private void Download(string parameter)
         {
+            Debug.WriteLine($"yt-dlp.exe {parameter}");
             using (Process p = new Process())
             {
                 p.StartInfo.FileName = "yt-dlp.exe";
@@ -314,89 +311,54 @@ namespace YTDLGUI
             }
         }
 
-        private void OutputDataReceived(object sender, DataReceivedEventArgs e)
+        private async void OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
             var text = e.Data;
-            if (!string.IsNullOrEmpty(text) && !text.ToLower().Contains("unknown"))
+            Debug.WriteLine(text);
+            if (string.IsNullOrEmpty(text) || text.ToLower().Contains("unknown")) return;
+
+            var title = currentItem.SubItems[0];
+            var size = currentItem.SubItems[1];
+            var progress = currentItem.SubItems[2];
+            var speed = currentItem.SubItems[3];
+            var ETA = currentItem.SubItems[4];
+            var status = currentItem.SubItems[5];
+
+            if (text.ToLower().Contains("extract") || text.ToLower().Contains("ffmpeg"))
             {
-                var title = currentItem.SubItems[0];
-                var size = currentItem.SubItems[1];
-                var progress = currentItem.SubItems[2];
-                var speed = currentItem.SubItems[3];
-                var ETA = currentItem.SubItems[4];
-                var status = currentItem.SubItems[5];
-                var match = Regex.Match(text, "\\[download\\] Downloading video (\\d+) of (\\d+)");
-                if (match.Success)
+                Invoke(new Action(() => status.Text = "轉檔中..."));
+                return;
+            }
+
+            var _ = await Task.Run(() => Utils.ParseListCounter(text));
+            if (_.success) listCounter = _.counter;
+
+            if (!string.IsNullOrEmpty(listCounter))
+            {
+                var filename = await Task.Run(() => Utils.ParseFilename(text));
+                if (!string.IsNullOrEmpty(filename))
                 {
-                    PlayListCount = $"[{match.Groups[1].Value}/{match.Groups[2].Value}]";
+                    Invoke(new Action(() => title.Text = $"{listCounter} {filename}"));
+                    return;
                 }
-                if (!string.IsNullOrEmpty(PlayListCount))
-                {
-                    match = Regex.Match(text, "\\[download\\] Destination: (.+)");
-                    if (match.Success)
-                    {
-                        Invoke(new Action(() =>
-                        {
-                            title.Text = $"{PlayListCount} {Path.GetFileNameWithoutExtension(match.Groups[1].Value)}";
-                        }));
-                    }
-                }
-                if (DateTimeOffset.Now.Subtract(updateTime).Milliseconds > 200)
-                {
-                    var result = GetProgress(text);
-                    if (!string.IsNullOrEmpty(result.progress))
-                    {
-                        Invoke(new Action(() =>
-                        {
-                            progress.Text = result.progress;
-                            size.Text = result.size;
-                            speed.Text = result.speed;
-                            ETA.Text = result.ETA;
-                            status.Text = "下載中...";
-                        }));
-                    }
-                    updateTime = DateTimeOffset.Now;
-                }
-                if (text.ToLower().Contains("ffmpeg"))
+            }
+
+            if (Utils.DeltaTime(updateTime) > 200)
+            {
+                var result = await Task.Run(() => Utils.ParseProgress(text));
+                if (!string.IsNullOrEmpty(result.progress))
                 {
                     Invoke(new Action(() =>
                     {
-                        status.Text = "轉檔中...";
+                        progress.Text = result.progress;
+                        size.Text = result.size;
+                        speed.Text = result.speed;
+                        ETA.Text = result.ETA;
+                        status.Text = "下載中...";
                     }));
                 }
+                updateTime = DateTimeOffset.Now;
             }
-        }
-
-        private (string progress, string size, string speed, string ETA) GetProgress(string text)
-        {
-            string progress = string.Empty, size = string.Empty, speed = string.Empty, ETA = string.Empty;
-            // normal output
-            var match = Regex.Match(text, "\\[download\\](.+)of(.+)at(.+)ETA(.+)");
-            if (match.Success)
-            {
-                progress = match.Groups[1].Value.Replace(" ", "");
-                size = match.Groups[2].Value.Replace(" ", "").Replace("iB", "B");
-                speed = match.Groups[3].Value.Replace(" ", "").Replace("iB", "B");
-                ETA = match.Groups[4].Value.Replace(" ", "");
-            }
-            // fragment output
-            match = Regex.Match(text, "\\[download\\](.+)at(.+)\\((.+)\\) \\((.+)\\)");
-            if (match.Success)
-            {
-                progress = match.Groups[4].Value;
-                size = match.Groups[1].Value.Replace(" ", "").Replace("iB", "B");
-                speed = match.Groups[2].Value.Replace(" ", "").Replace("iB", "B");
-            }
-            // aria2c output
-            match = Regex.Match(text, "\\[.+ (\\w+)\\/.+\\((.+)\\).+DL:(.+).+ETA:(.+)\\]");
-            if (match.Success)
-            {
-                progress = match.Groups[2].Value.Replace(" ", "");
-                size = match.Groups[1].Value.Replace(" ", "").Replace("iB", "B");
-                speed = match.Groups[3].Value.Replace(" ", "").Replace("iB", "B");
-                ETA = match.Groups[4].Value.Replace(" ", "");
-            }
-            return (progress, size, speed, ETA);
         }
     }
 }
