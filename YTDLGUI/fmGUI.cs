@@ -209,11 +209,6 @@ namespace YTDLGUI
 
         private async void buttonDownload_Click(object sender, EventArgs e)
         {
-            if (tabControl.SelectedIndex == 2)
-            {
-                tabControl.SelectedIndex = 0;
-                return;
-            }
             var mode = tabControl.SelectedIndex;
             foreach (string url in textURL.Lines)
             {
@@ -291,7 +286,7 @@ namespace YTDLGUI
             using (Process p = new Process())
             {
                 p.StartInfo.FileName = "yt-dlp.exe";
-                p.StartInfo.Arguments = $"--no-playlist --get-title --encoding \"UTF-8\" \"{url}\"";
+                p.StartInfo.Arguments = $"--encoding \"UTF-8\" --print filename -o \"%(title)s\" \"{url}\"";
                 p.StartInfo.CreateNoWindow = true;
                 p.StartInfo.UseShellExecute = false;
                 p.StartInfo.StandardOutputEncoding = Encoding.UTF8;
