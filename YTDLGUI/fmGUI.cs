@@ -251,25 +251,30 @@ namespace YTDLGUI
         private string GetDownloadParameter(int mode)
         {
             var sb = new StringBuilder();
-            sb.Append("--encoding \"UTF-8\" --no-warnings --ignore-errors");
-            sb.Append($" -N {numUpDown_MT_fragment.Value} --embed-subs --compat-options no-live-chat --embed-thumbnail --embed-metadata --embed-chapters");
-            sb.Append(checkPlaylist.Checked ? " --yes-playlist" : " --no-playlist");
-            sb.Append(checkLiveFromStart.Checked ? " --live-from-start" : string.Empty);
-            sb.Append(checkUseAria2c.Checked ? " --downloader aria2c" : string.Empty);
-            sb.Append($" -o \"{settings.DownloadFolder}\\%(title)s.%(ext)s\"");
+            sb.Append("--encoding \"UTF-8\" --ignore-config --ignore-errors --progress-delta 0.5 ");
+            sb.Append($"--concurrent-fragments {numUpDown_MT_fragment.Value} --retry-sleep fragment:1 ");
+            sb.Append("--embed-metadata --embed-chapters ");
+            if (!radioVWebm.Checked)
+                sb.Append("--embed-thumbnail --convert-thumbnails jpg --ppa \"ThumbnailsConvertor:-q:v 1\" ");
+            sb.Append(checkPlaylist.Checked ? "--yes-playlist " : "--no-playlist ");
+            sb.Append(checkLiveFromStart.Checked ? "--live-from-start " : string.Empty);
+            sb.Append(checkUseAria2c.Checked ? "--downloader aria2c " : string.Empty);
+            sb.Append($"-P \"{settings.DownloadFolder}\" -P \"temp:%TEMP%\" ");
+            sb.Append($"-o \"%(title)s.%(ext)s\" -S \"res,vcodec:h264,hdr,vbr\" ");
             if (mode == 0)
             {
-                sb.Append(" -f \"bestvideo");
+                sb.Append("-f \"bv");
                 if (checkMaxRes.Checked) sb.Append($"[height<={comboMaxRes.Text.Replace("p", "")}]");
-                if (radioVDefault.Checked) sb.Append($"+bestaudio");
-                if (radioVMP4.Checked) sb.Append($"[ext=mp4]+bestaudio[ext=m4a]");
-                if (radioVWebm.Checked) sb.Append($"[ext=webm]+bestaudio[ext=webm]");
-                sb.Append("/best\"");
+                if (radioVDefault.Checked) sb.Append($"+ba");
+                if (radioVMP4.Checked) sb.Append($"[vcodec^=avc]+ba[acodec^=mp4a]");
+                if (radioVWebm.Checked) sb.Append($"[vcodec^=vp]+ba[acodec^=opus]");
+                sb.Append("\"");
+                //sb.Append("/best\"");
                 return sb.ToString();
             }
             if (mode == 1)
             {
-                sb.Append(" -f \"bestaudio/best\" --extract-audio");
+                sb.Append("-f \"ba/best\" --extract-audio");
                 sb.Append($" --audio-format {comboAFormat.Text}");
                 sb.Append($" --audio-quality {(comboAQuality.Enabled ? comboAQuality.Text : "0")}");
                 return sb.ToString();
