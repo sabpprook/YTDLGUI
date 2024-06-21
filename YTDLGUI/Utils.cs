@@ -30,7 +30,7 @@ namespace YTDLGUI
         public static string gui { get; } = "https://github.com/sabpprook/YTDLGUI/releases/latest/download/YTDLGUI.exe";
         public static string aria2 { get; } = "https://github.com/aria2/aria2/releases/latest";
         public static string ytdlp { get; } = "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe";
-        public static string ffmpeg { get; } = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip";
+        public static string ffmpeg { get; } = "https://github.com/yt-dlp/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip";
 
         public static bool CheckBinary()
         {
